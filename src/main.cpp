@@ -1,25 +1,49 @@
-#include <raylib.h>
+// --------------------------------- Header Files -------------------------------
 
-// Function declarations
-void InitGame();         // Initializes the game
-void UpdateInput(float deltaTime); // Handles player input
-void UpdateGame(float deltaTime);  // Updates the game logic
-void DrawGame();         // Renders the game
-void CloseGame();        // Cleans up resources
 
+// ---------------------------------- Constants ---------------------------------
+
+
+// Game settings
+
+// ------------------------------------ Enums ------------------------------------
+
+
+// ------------------------------- Global Variables ------------------------------
+
+
+// ---------------------------- Function Declarations ----------------------------
+
+
+/////////////////////////////////////////////////  Nishad  //////////////////////////////////////////////
+void HandleModeSelection();
+
+void HandleDifficultySelection();
+
+/////////////////////////////////////////////////  Rahul  //////////////////////////////////////////////
+void HandleGameOver();
+
+
+////////////////////////////////////////////////  Redowan  ////////////////////////////////////////////////
+void UpdateGameLogic();
+
+
+void DrawGameState();
+
+///////////////////////////////////////////////  Theo  //////////////////////////////////////////////////////
+void ResetBall();
+
+///////////////////////////////////////////////  Hakim  //////////////////////////////////////////////////////
+void HandlePaddleMovement();
+                        
+void HandleBallCollision();
+
+
+// ------------------------------------------ Main Function ----------------------------------------------
 int main()
 {
-     InitGame();
-
-    while (!WindowShouldClose()) {
-        float deltaTime = GetFrameTime();
-
-        UpdateInput(deltaTime);
-        UpdateGame(deltaTime);
-        DrawGame();
-    }
-
-    CloseGame();
-
     return 0;
 }
+
+// ----------------------- Function Definitions -----------------------
+
