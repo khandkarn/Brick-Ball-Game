@@ -36,7 +36,6 @@ float speedIncrement = 0.0f;
 
 // ---------------------------- Function Declarations ----------------------------
 
-
 /////////////////////////////////////////////////  Nishad  //////////////////////////////////////////////
 void HandleModeSelection();
 
@@ -45,24 +44,22 @@ void HandleDifficultySelection();
 /////////////////////////////////////////////////  Rahul  //////////////////////////////////////////////
 void HandleGameOver();
 
-
 ////////////////////////////////////////////////  Redowan  ////////////////////////////////////////////////
 void UpdateGameLogic(Vector2 &ballPosition, Vector2 &ballDirection, float &ballSpeed,
                      int &player1Lives, int &player2Lives, int &player1Score, int &player2Score,
                      float &player1PaddleY, float &player2PaddleY, bool &gameOver, bool &player1Won);
 
-
 void DrawGameState(float player1PaddleY, float player2PaddleY, Vector2 ballPosition,
-                            int player1Lives, int player2Lives, int player1Score, int player2Score);
+                   int player1Lives, int player2Lives, int player1Score, int player2Score);
 
 ///////////////////////////////////////////////  Theo  //////////////////////////////////////////////////////
 void ResetBall(Vector2 &ballPosition, Vector2 &ballDirection, float &ballSpeed);
 
 ///////////////////////////////////////////////  Hakim  //////////////////////////////////////////////////////
-void HandlePaddleMovement();
-                        
-void HandleBallCollision();
+void HandlePaddleMovement(float &player1PaddleY, float &player2PaddleY, const Vector2 &ballPosition);
 
+void HandleBallCollision(Vector2 &ballDirection, float &ballSpeed, int &player1Score, int &player2Score,
+                         const float player1PaddleY, const float player2PaddleY, Vector2 &ballPosition);
 
 // ------------------------------------------ Main Function ----------------------------------------------
 int main()
@@ -115,7 +112,6 @@ int main()
         // Drawing
         DrawGameState(player1PaddleY, player2PaddleY, ballPosition, player1Lives, player2Lives, player1Score, player2Score);
     }
-
 
     CloseWindow();
     return 0;
@@ -175,10 +171,52 @@ void DrawGameState(float player1PaddleY, float player2PaddleY, Vector2 ballPosit
     EndDrawing();
 }
 
-
 void ResetBall(Vector2 &ballPosition, Vector2 &ballDirection, float &ballSpeed)
 {
     ballPosition = {WIDTH / 2, HEIGHT / 2};
     ballDirection = {ballDirection.x, ballDirection.y > 0 ? 1.0f : -1.0f};
     ballSpeed = INITIAL_BALL_SPEED;
+}
+
+void HandleBallCollision(Vector2 &ballDirection, float &ballSpeed, int &player1Score, int &player2Score, const float player1PaddleY, const float player2PaddleY, Vector2 &ballPosition)
+{
+    if (ballPosition.y < 0 || ballPosition.y > HEIGHT)
+        ballDirection.y = -ballDirection.y;
+    if (ballPosition.x < PADDLE_WIDTH && ballPosition.y > player1PaddleY && ballPosition.y < player1PaddleY + PADDLE_HEIGHT)
+    {
+        ballDirection.x = fabs(ballDirection.x);
+        player1Score += HIT_SCORE;
+    }
+    if (ballPosition.x > WIDTH - PADDLE_WIDTH - BALL_SIZE && ballPosition.y > player2PaddleY && ballPosition.y < player2PaddleY + PADDLE_HEIGHT)
+    {
+        ballDirection.x = -fabs(ballDirection.x);
+        player2Score += HIT_SCORE;
+    }
+}
+void HandlePaddleMovement(float &player1PaddleY, float &player2PaddleY, const Vector2 &ballPosition)
+{ // Player 1 movement
+    if (IsKeyDown(KEY_W) && player1PaddleY > 0)
+        player1PaddleY -= 5.0f;
+    if (IsKeyDown(KEY_S) && player1PaddleY < HEIGHT - PADDLE_HEIGHT)
+        player1PaddleY += 5.0f;
+    // Player 2 or Bot movement
+    if (gameMode == PLAYER_VS_PLAYER)
+    {
+        if (IsKeyDown(KEY_UP) && player2PaddleY > 0)
+            player2PaddleY -= 5.0f;
+        if (IsKeyDown(KEY_DOWN) && player2PaddleY < HEIGHT - PADDLE_HEIGHT)
+            player2PaddleY += 5.0f;
+    }
+    else
+    {
+        // Movement Logic for Bot AI
+        if (player2PaddleY + PADDLE_HEIGHT / 2 < ballPosition.y)
+            player2PaddleY += botPaddleSpeed;
+        if (player2PaddleY + PADDLE_HEIGHT / 2 > ballPosition.y)
+            player2PaddleY -= botPaddleSpeed;
+        if (player2PaddleY < 0)
+            player2PaddleY = 0;
+        if (player2PaddleY > HEIGHT - PADDLE_HEIGHT)
+            player2PaddleY = HEIGHT - PADDLE_HEIGHT;
+    }
 }
